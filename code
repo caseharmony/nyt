@@ -1,0 +1,421 @@
+package nytg;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+public class nytg {
+
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		Scanner scanner = new Scanner(System.in);
+		
+		
+int cont=1;
+while(cont==1) {
+	System.out.println("Enter the game you wish to play");
+	System.out.println("1 - Wordle");
+	System.out.println("3 - Connections");
+	System.out.println();
+    int number = scanner.nextInt();
+        switch (number) {
+
+            case 1:
+            {	
+                    int WORD_LENGTH = 5;
+                    int MAX_ATTEMPTS = 6;
+                    Set<String> dictionary = new HashSet<>();
+                    List<String> validWords = new ArrayList<>();
+                    String filename = "dictionary.txt"; // Ensure you have this file
+                    try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            line = line.trim().toLowerCase();
+                            if (line.length() == WORD_LENGTH) {
+                                dictionary.add(line);
+                                validWords.add(line);
+                            }
+                        }
+                    } 
+					
+                    Set<String> dictionary2 = new HashSet<>();
+                    List<String> validWords2 = new ArrayList<>();
+                    String filename2 = "usewords.txt"; // Ensure you have this file
+                    try (BufferedReader reader2 = new BufferedReader(new FileReader(filename2))) {
+                        String line;
+                        while ((line = reader2.readLine()) != null) {
+                            line = line.trim().toLowerCase();
+                            if (line.length() == WORD_LENGTH) {
+                                dictionary2.add(line);
+                                validWords2.add(line);
+                            }
+                        }
+                    }
+                    
+                    catch (IOException e) {
+                        System.out.println("Error loading dictionary: " + e.getMessage());
+                        return;
+                    }
+
+                    if (validWords.isEmpty()) {
+                        System.out.println("No valid words found in the dictionary!");
+                        return;
+                        }
+                    if (validWords2.isEmpty()) {
+                        System.out.println("No valid words found in the dictionary!");
+                        return;
+                    	}
+                    
+                    Random random = new Random();
+                    String secretWord = validWords2.get(random.nextInt(validWords2.size()));
+                    
+                    System.out.println("Welcome to Wordle!");
+                    System.out.println("Try to guess the " + WORD_LENGTH + "-letter word. You have " + MAX_ATTEMPTS + " attempts.");
+                    System.out.println("Feedback will be given as follows:");
+                    System.out.println("🟩 (G) = Correct letter in correct position");
+                    System.out.println("🟨 (Y) = Correct letter in wrong position");
+                    System.out.println("⬜ (_) = Letter not in word");
+
+                    int attempt = 1;
+                    String guess = scanner.nextLine().trim().toLowerCase();
+                    while (attempt <= MAX_ATTEMPTS) {
+                    	
+                        System.out.print("\nAttempt " + attempt + "/" + MAX_ATTEMPTS + ": ");
+                        guess = scanner.nextLine().trim().toLowerCase();
+                        if (guess.length() != WORD_LENGTH || !dictionary.contains(guess)) {
+                            System.out.println("Invalid guess! Please enter a valid " + WORD_LENGTH + "-letter word.");
+                            continue;
+
+                        }
+
+
+
+
+                        char[] feedback = new char[WORD_LENGTH];
+                        Arrays.fill(feedback, '_');
+                        boolean[] usedSecret = new boolean[WORD_LENGTH];
+                        for (int i = 0; i < WORD_LENGTH; i++) {
+                            if (guess.charAt(i) == secretWord.charAt(i)) {
+                                feedback[i] = 'G';
+                                usedSecret[i] = true;
+                            }
+                        }
+                        for (int i = 0; i < WORD_LENGTH; i++) {
+                            if (feedback[i] == '_') {
+                                for (int j = 0; j < WORD_LENGTH; j++) {
+                                    if (!usedSecret[j] && guess.charAt(i) == secretWord.charAt(j)) {
+                                        feedback[i] = 'Y';
+                                        usedSecret[j] = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        System.out.println("Feedback: " + new String(feedback));
+                        for (int i = 0; i < WORD_LENGTH; i++) {
+                            char guessChar = guess.charAt(i);
+                            if (guessChar == secretWord.charAt(i)) {
+                                System.out.print("🟩");
+                            } else if (secretWord.contains(String.valueOf(guessChar))) {
+                                System.out.print("🟨");
+                            } else {
+                                System.out.print("⬜"); 
+                            }
+                        }
+                        System.out.println(" " + guess);
+                        if (guess.equals(secretWord)) {
+                            System.out.println("\nCongratulations! You've won in " + attempt + " attempts!");
+                            return;
+                        }
+                        attempt++;
+                    }
+                    System.out.println("\nGame Over! The word was: " + secretWord);
+                
+        }
+                
+
+                break;
+
+            case 2:
+
+                
+
+                break;
+                
+            case 3:
+{
+            	int lives=4;
+                String filePath = "connections.txt";
+                Random random = new Random();
+                int targetId = random.nextInt(513);
+        
+                List<String> lines = new ArrayList<>();
+
+                //shuffle and doc input
+                try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        lines.add(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                
+                boolean found = false;
+                List<String> selectedLines = new ArrayList<>();
+                List<String> grp1 = new ArrayList<>();
+                List<String> grp2 = new ArrayList<>();
+                List<String> grp3 = new ArrayList<>();
+                List<String> grp4 = new ArrayList<>();
+                int[] lineIndexes = {6, 7, 8, 9, 16, 17, 18, 19, 26, 27, 28, 29, 36, 37, 38, 39};
+                int[] Ansg1 = {4,6,7,8,9};
+                int[] Ansg2 = {14,16,17,18,19};
+                int[] Ansg3 = {24,26,27,28,29};
+                int[] Ansg4 = {34,36,37,38,39};
+                for (int i = 0; i < lines.size(); i++) {
+                    if (lines.get(i).contains("\"id\": " + targetId)) {
+                        found = true;
+
+                        
+                        for (int index : lineIndexes) {
+                            if ((i + index + 1) < lines.size()) {
+                                String selectedLine = lines.get(i + index + 1);
+                                selectedLine = selectedLine.replace("\"", "").replace(",", "").replace(" ", "");
+                                selectedLines.add(selectedLine);
+                            }
+                        }
+                        for (int index : Ansg1) {
+                            if ((i + index + 1) < lines.size()) {
+                                String ans1 = lines.get(i + index + 1);
+                                ans1 = ans1.replace("\"", "").replace(",", "").replace(" ", "");
+                                grp1.add(ans1);
+                            }
+                        }
+                        
+                        for (int index : Ansg2) {
+                            if ((i + index + 1) < lines.size()) {
+                                String ans2 = lines.get(i + index + 1);
+                                ans2 = ans2.replace("\"", "").replace(",", "").replace(" ", "");
+                                grp2.add(ans2);
+                            }
+                        }
+                        for (int index : Ansg3) {
+                            if ((i + index + 1) < lines.size()) {
+                                String ans3 = lines.get(i + index + 1);
+                                ans3 = ans3.replace("\"", "").replace(",", "").replace(" ", "");
+                                grp3.add(ans3);
+                            }
+                        }
+                        for (int index : Ansg4) {
+                            if ((i + index + 1) < lines.size()) {
+                                String ans4 = lines.get(i + index + 1);
+                                ans4 = ans4.replace("\"", "").replace(",", "").replace(" ", "");
+                                grp4.add(ans4);
+                            }
+                        }
+                        break;
+                    }
+                }
+                int a,b,c,d;
+                boolean A1=false,A2=false,A3=false,A4=false;
+        do {
+        	if(selectedLines.size()==4)
+        	{
+        		a=1;b=2;c=3;d=4;
+        	}
+        	else {
+                if (!found) {
+                    System.out.println("ID not found.");
+                } else {
+                    Collections.shuffle(selectedLines);
+                    
+                    for (int j = 0; j < selectedLines.size(); j++) {
+                    	System.out.println((j + 1) + " - " + selectedLines.get(j));
+                    }
+                           }
+            //logic
+                System.out.println("Enter the numbers of the words you have selected. Press enter afrer each no.");
+                a = scanner.nextInt();
+                b = scanner.nextInt();
+                c = scanner.nextInt();
+                d = scanner.nextInt();
+                a--;b--;c--;d--;
+                }
+        	if(a==b||a==c||a==d||b==c||b==d||c==d)
+        	{
+        		System.out.println("Looks like you have repeated terms. try again");
+        	}
+        	else if(a>=selectedLines.size())
+        	{
+        		System.out.println("one or more numbers is larger than the given options.");
+        	}
+        	else
+        	{
+        	
+        	
+                String A=selectedLines.get(a);
+                String B=selectedLines.get(b);
+                String C=selectedLines.get(c);
+                String D=selectedLines.get(d);
+               
+                int checkg1=0;
+                int checkg2=0;
+                int checkg3=0;
+                int checkg4=0;
+        	
+                
+                for (String str : grp1) {
+                	if(str.equals(A)) {
+                		checkg1++;
+                	}
+                	if(str.equals(B)) {
+                		checkg1++;
+                	}
+                	if(str.equals(C)) {
+                		checkg1++;
+                	}
+                	if(str.equals(D)) {
+                		checkg1++;
+                	}
+                }
+                for (String str : grp2) {
+                	if(str.equals(A)) {
+                		checkg2++;
+                	}
+                	if(str.equals(B)) {
+                		checkg2++;
+                	}
+                	if(str.equals(C)) {
+                		checkg2++;
+                	}
+                	if(str.equals(D)) {
+                		checkg2++;
+                	}
+                }
+                for (String str : grp3) {
+                	if(str.equals(A)) {
+                		checkg3++;
+                	}
+                	if(str.equals(B)) {
+                		checkg3++;
+                	}
+                	if(str.equals(C)) {
+                		checkg3++;
+                	}
+                	if(str.equals(D)) {
+                		checkg3++;
+                	}
+                }
+                for (String str : grp4) {
+                	if(str.equals(A)) {
+                		checkg4++;
+                	}
+                	if(str.equals(B)) {
+                		checkg4++;
+                	}
+                	if(str.equals(C)) {
+                		checkg4++;
+                	}
+                	if(str.equals(D)) {
+                		checkg4++;
+                	}
+                }
+                if(checkg1==4) {
+                	for (int j = 0; j < grp1.size(); j++) {
+                    	System.out.println(grp1.get(j));	
+                }
+                	selectedLines.remove(A);
+                	selectedLines.remove(B);
+                	selectedLines.remove(C);
+                	selectedLines.remove(D);
+                	A1=true;
+                }
+                else if(checkg2==4) {
+                	for (int j = 0; j < grp2.size(); j++) {
+                    	System.out.println(grp2.get(j));	
+                }
+                	selectedLines.remove(A);
+                	selectedLines.remove(B);
+                	selectedLines.remove(C);
+                	selectedLines.remove(D);
+                	A2=true;
+                }
+                else if(checkg3==4) {
+                	for (int j = 0; j < grp3.size(); j++) {
+                    	System.out.println(grp3.get(j));	
+                }
+                	selectedLines.remove(A);
+                	selectedLines.remove(B);
+                	selectedLines.remove(C);
+                	selectedLines.remove(D);
+                	A3=true;
+                }
+                else if(checkg4==4) {
+                	for (int j = 0; j < grp4.size(); j++) {
+                    	System.out.println(grp4.get(j));	
+                }
+                	selectedLines.remove(A);
+                	selectedLines.remove(B);
+                	selectedLines.remove(C);
+                	selectedLines.remove(D);
+                	A4=true;
+                }
+                
+                else {
+                	lives--;
+                	System.out.println("sorry that is the wrong answer. you now have "+lives+" lives left");
+                	if(lives==0) {
+                	
+                		System.out.println("sorry you have lost");
+                	}
+                }
+                
+            if(selectedLines.size()==4)
+                {if(!A1) {
+                	for (int j = 0; j < grp1.size(); j++) {
+                    	System.out.println(grp1.get(j));
+                	}
+                }
+                else if(!A2) {
+                	for (int j = 0; j < grp2.size(); j++) {
+                    	System.out.println(grp2.get(j));
+                	}
+                }
+                else if(!A3) {
+                	for (int j = 0; j < grp3.size(); j++) {
+                    	System.out.println(grp3.get(j));
+                	}
+                }
+                else if(!A4) {
+                	for (int j = 0; j < grp4.size(); j++) {
+                    	System.out.println(grp4.get(j));
+                	}
+                }
+                	System.out.println("congradulations! you have won connections");
+                	lives=0;
+                }
+                
+                
+        	}
+        } while(lives>0);
+        }
+                
+
+                break;
+
+            
+
+            default:
+
+                System.out.println("Sorry, that number is not in the given range");
+                
+        }
+        System.out.println("\n"+"do you want to play another game?"
+        		+ "\n"+" 1 - continue"
+        		+ "\n"+" 0 - exit");
+        cont = scanner.nextInt();
+        
+}
+	}
+
+}
